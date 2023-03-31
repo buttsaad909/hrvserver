@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/plugins/forceDirected.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <link rel="stylesheet" href="https://cdn.amcharts.com/lib/4/style.css" />
+    <script src="{% static 'script.js' %}"></script>
+    <script src="{% static 'script1.js' %}"></script>
+    <meta charset="UTF-8">
+    <title>Measures</title>
+    <style>
+        body {
+            background: url("/static/background.jpg") ;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+                Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                
+        }
+
+        .table-1 {
+          border: 2px solid black;
+          width: 100%;
+        }
+        .header {
+            padding: 2px;
+            text-align: left;
+            background: #1abc9c;
+            color: white;
+            padding-left: 50px;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #000;
+        }
+        .BigCircle {
+            width: 450px;
+            height: 450px;
+            line-height: 450px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #48b368;
+            left:44%;
+            top:50%;
+            margin-top:-50px;
+            margin-left:-50px;
+            position:absolute;
+            display:block;
+            font-size: 50px;
+            font-weight: bold;
+            background-image: linear-gradient(to bottom right, red, yellow);
+        }
+        .circle1 {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #48b368;
+            left:30%;
+            top:30%;
+            margin-top:-50px;
+            margin-left:-50px;
+            position:absolute;
+            display:block;
+            font-size: 25px;
+            background-image: linear-gradient(to bottom right, red, yellow);
+        }
+        .para {
+            margin-top: 62px;
+            font-weight: bold;
+        }
+        #chartdiv {
+        width: 100%;
+        height: 800px;
+        max-width: 100%;
+        }
+        .settings {
+            position: absolute;
+            right:    0;
+            bottom:   0;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background-color: #D27685;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 30px;
+            color: #66347F;
+        }
+        .settings1 {
+            position: absolute;
+            right:    0;
+            bottom:   0;
+            margin-right: 250px;
+            margin-bottom: 10px;
+            background-color: #D27685;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 30px;
+            color: #66347F;
+        }
+        .container{
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .button {
+            margin-left: 70px;
+            color: #66347F;
+            background-color: #D27685; /* Green */
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .text {
+
+        }
+    </style>
+
+</head>
+<body>
+    <div class="header">
+        <h1>Stress Health</h1>
+    </div>
+    <div class="container">
+        <h1>Countdown Timer</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button" type="submit">Set Timer</button>
+        </form>
+        
+        {% if timer %}
+            <h2>Time Remaining</h2>
+            <div id="countdown"></div>
+        
+            <script>
+            const endTime = new Date('{{ timer.end_time|date:"c" }}');
+            const countdownElement = document.getElementById('countdown');
+        
+            function updateCountdown() {
+                const now = new Date();
+                const timeRemaining = endTime - now;
+        
+                if (timeRemaining <= 0) {
+                countdownElement.innerHTML = 'Time\'s up!';
+                return;
+                }
+                const seconds = Math.floor((timeRemaining / 1000) % 60);
+                const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
+                const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                setTimeout(updateCountdown, 1000);
+            }
+        
+            updateCountdown();
+            </script>
+        {% endif %}
+
+        <p class="text">
+            <h1 style="font-size:300%;">Deep Breating</h1>
+            <p style="font-size:160%;">Set a timer above depending on how much time is available then find a quiet place to sit or lie down. 
+                Take a slow, deep breath through your nose, filling your lungs fully. 
+                Hold your breath for a few seconds, then exhale slowly through your mouth. Repeat this until the timer is done or until you are relaxed. </p>
+        </p>
+    </div>
+    <div class="settings" onclick="myFunc()">
+        Background Image
+    </div>
+    <div class="settings1" onclick="myFunc1()">
+        Music
+    </div>
+</body>
+
+<script>
+    var I=0;
+function myFunc(){
+    
+    var colors = ["url(/static/background.jpg)","url(/static/background1.jpg) no-repeat", "url(/static/background2.jpg) no-repeat"];
+    I++; 
+    if (I == colors.length) {
+        I=0;
+    }
+    document.body.style.background = colors[I];
+    
+}
+
+var V=0;
+function myFunc1(){
+    
+    var music = ["/static/lofi.mp3","/static/lofi1.mp3","/static/lofi2.mp3"];
+    V++; 
+    if (V == music.length) {
+        V=0;
+    }
+    document.querySelector("audio").src = music[V];
+    
+}
+
+</script>
+
+</html>

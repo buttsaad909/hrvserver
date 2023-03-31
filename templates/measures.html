@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/plugins/forceDirected.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <link rel="stylesheet" href="https://cdn.amcharts.com/lib/4/style.css" />
+    <script src="{% static 'script.js' %}"></script>
+    <script src="{% static 'script1.js' %}"></script>
+    <meta charset="UTF-8">
+    <title>Measures</title>
+    <style>
+        body {
+            background: url("/static/background.jpg") ;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+                Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                
+        }
+
+        .table-1 {
+          border: 2px solid black;
+          width: 100%;
+        }
+        .header {
+            padding: 2px;
+            text-align: left;
+            background: #1abc9c;
+            color: white;
+            padding-left: 50px;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #000;
+        }
+        .BigCircle {
+            width: 450px;
+            height: 450px;
+            line-height: 450px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #48b368;
+            left:44%;
+            top:50%;
+            margin-top:-50px;
+            margin-left:-50px;
+            position:absolute;
+            display:block;
+            font-size: 50px;
+            font-weight: bold;
+            background-image: linear-gradient(to bottom right, red, yellow);
+        }
+        .circle1 {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            background: #48b368;
+            left:30%;
+            top:30%;
+            margin-top:-50px;
+            margin-left:-50px;
+            position:absolute;
+            display:block;
+            font-size: 25px;
+            background-image: linear-gradient(to bottom right, red, yellow);
+        }
+        .para {
+            margin-top: 62px;
+            font-weight: bold;
+        }
+        #chartdiv {
+        width: 100%;
+        height: 800px;
+        max-width: 100%;
+        }
+        .settings {
+            position: absolute;
+            right:    0;
+            bottom:   0;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background-color: #D27685;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 30px;
+            color: #66347F;
+        }
+        .settings1 {
+            position: absolute;
+            right:    0;
+            bottom:   0;
+            margin-right: 250px;
+            margin-bottom: 10px;
+            background-color: #D27685;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 30px;
+            color: #66347F;
+        }
+
+
+    </style>
+
+</head>
+<body>
+    <div class="header">
+        <h1>Stress Health</h1>
+    </div>
+    <audio id="player" autoplay loop>
+        <source src="/static/lofi.mp3" type="audio/mp3">
+    </audio>
+    <div id="chartdiv"></div>
+    <div class="settings" onclick="myFunc()">
+        Background Image
+    </div>
+    <div class="settings1" onclick="myFunc1()">
+        Music
+    </div>
+</body>
+
+<script>
+    var I=0;
+    function myFunc(){
+        
+        var colors = ["url(/static/background.jpg)","url(/static/background1.jpg) no-repeat", "url(/static/background2.jpg) no-repeat"];
+        I++; 
+        if (I == colors.length) {
+            I=0;
+        }
+        document.body.style.background = colors[I];
+        
+    }
+
+    var V=0;
+    function myFunc1(){
+        
+        var music = ["/static/lofi.mp3","/static/lofi1.mp3","/static/lofi2.mp3"];
+        V++; 
+        if (V == music.length) {
+            V=0;
+        }
+        document.querySelector("audio").src = music[V];
+        
+    }
+
+    am4core.useTheme(am4themes_animated);
+
+    var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTree);
+    var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
+    var BPM = JSON.parse('{{ avgBPM|floatformat:2 }}')
+    var sdnn = JSON.parse('{{ avgsdnn|floatformat:2 }}')
+    var rmssd = JSON.parse('{{ avgrmssd|floatformat:2 }}')
+    var lf_hf = JSON.parse('{{ avglf_hf|floatformat:2 }}')
+    var pnn20 = JSON.parse('{{ avgpnn20|floatformat:2 }}')
+    var breathingrate = JSON.parse('{{ avgbreathingrate|floatformat:2 }}')
+    //value: "data:image/png;base64," + chart1,
+
+    chart.data = [
+    {
+        name: "Stress Levels",
+        children: [
+        {
+            name: "BPM",   value:BPM,
+        },
+        {
+            name: "SDNN", value: sdnn,
+        },
+        {
+            name: "RMSSD", value: rmssd,
+        },
+        {
+            name: "LF/HF ratio", value: lf_hf,
+        },
+        {
+            name: "PNN20", value: pnn20,
+        },
+        {
+            name: "Breathing rate", value: breathingrate,
+        },
+        {
+            name: "Advanced Data", value: 100,
+        },
+        ]
+    }
+    ];
+
+    networkSeries.dataFields.value = "value";
+    networkSeries.dataFields.name = "name";
+    networkSeries.dataFields.children = "children";
+    networkSeries.nodes.template.tooltipText = "{name}:{value}";
+    networkSeries.nodes.template.fillOpacity = 1;
+
+    networkSeries.nodes.template.label.text = "{name}"
+    networkSeries.fontSize = 20;
+
+    networkSeries.links.template.strokeWidth = 1;
+
+    var hoverState = networkSeries.links.template.states.create("hover");
+    hoverState.properties.strokeWidth = 3;
+    hoverState.properties.strokeOpacity = 1;
+
+    networkSeries.nodes.template.events.on("over", function(event) {
+    event.target.dataItem.childLinks.each(function(link) {
+        link.isHover = true;
+    })
+    if (event.target.dataItem.parentLink) {
+        event.target.dataItem.parentLink.isHover = true;
+    }
+
+    })
+
+    networkSeries.nodes.template.events.on("out", function(event) {
+    event.target.dataItem.childLinks.each(function(link) {
+        link.isHover = false;
+    })
+    if (event.target.dataItem.parentLink) {
+        event.target.dataItem.parentLink.isHover = false;
+    }
+    })
+
+    networkSeries.nodes.template.events.on("hit", function(event) {
+    if (event.target.isActive) {
+        chart.zoomToDataItem(event.target.dataItem, 3, true);
+    }
+    else {
+        chart.zoomOut();
+    }
+
+    // check if the clicked node is the "Stress Levels" node
+    if (event.target.dataItem.name === "Advanced Data") {
+        // redirect to a new page
+        window.location.href = "/hrv/page";
+    }
+    });
+
+
+    networkSeries.nodes.template.togglable = false;
+    chart.zoomable = true;
+    networkSeries.nodes.template.events.on("hit", function(event) {
+    if (event.target.isActive) {
+        chart.zoomToDataItem(event.target.dataItem, 3, true)
+    }
+    else {
+        chart.zoomOut();
+    }
+    });
+</script>
+</html>
